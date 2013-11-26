@@ -26,13 +26,13 @@ def gameStart():
             print "Please enter y for yes or n for no."
     return godMode
 
-def biomeGenerator(godMode):
+def biomePositionGenerator(godMode):
     global biomePosition
     biomePosition = ""
     if godMode == 1:
-        biomePosition = input("Which biome would you like to start at (Pick a number between 1 and 8)? ")
+        biomePosition = input("Which biome would you like to go to (Pick a number between 1 and 7)? ")
     if godMode == 0:
-        biomePosition = random.randint(1,8)
+        biomePosition = random.randint(1,7)
     return biomePosition
 
 def biomeDraw(fillColor):
@@ -56,7 +56,7 @@ def playerDraw():
     t.end_fill()
         
 def drawBoard(catastropheNumber):
-    biomeDraw() * (8 - catastropheNumber)
+    biomeDraw() * (7 - catastropheNumber)
 
 def drawPlayer(biomeNumber):
     t.penup()
@@ -123,3 +123,13 @@ def show_board(mssg):
 
     # your code... 
 
+def biomeGenerator(localList):
+    for i in range(len(localList)):
+        biomeData = localList[i].split("-")
+    for j in range(0, (len(biomeData)), 3):
+        biomeDiamonds = biomeData[i]
+    for k in range(1, (len(biomeData)), 3):
+        biomeSwords = biomeData[i]
+    for l in range(2, (len(biomeData)), 3):
+        biomeEnemies = biomeData[i]
+    
