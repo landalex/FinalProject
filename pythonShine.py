@@ -7,7 +7,7 @@ import turtle as t
 # VARIABLES
 
 godMode = ""
-playerPos = 0
+playerPos = ""
 biomeData = []
 biomeDiamonds = []
 biomeSwords = []
@@ -18,6 +18,10 @@ catastropheNumber = 0
 pythonShine = ""
 playerName = ""
 startGame = ""
+playerHealth = ""
+catastrophe = ""
+maximumTurns = ""
+turnNumber = 1
 
 # FUNCTIONS
 
@@ -48,7 +52,7 @@ def enterInfo():
 
 def biomePositionGenerator(godMode):
     global playerPos
-    playerPos = 0
+    playerPos = ""
     if godMode == True:
         playerPos = input("Which biome would you like to go to (Pick a number between 1 and 7)? ")
     if godMode == False:
@@ -132,16 +136,21 @@ def biomeDataParser(localList):
             biomeEnemies.append(biomeData[j][k+2])
     
 
-def biomeTable(pythonShine):
+def biomeTable(pythonShine, playerName):
     print "The current board state is as follows:"
     print "Biome Diamd Sword Enemy"
     for i in range(len(biomeData)):
         if pythonShine == i:
             print i , " " * (5-(len(str(i)))), biomeDiamonds[i], " " * (5-(len(str(biomeDiamonds[i])))), \
               biomeSwords[i], " " * (5-(len(str(biomeSwords[i])))), biomeEnemies[i] + "  <=== PythonShine"
+        elif playerPos == i:
+            print i , " " * (5-(len(str(i)))), biomeDiamonds[i], " " * (5-(len(str(biomeDiamonds[i])))), \
+                  biomeSwords[i], " " * (5-(len(str(biomeSwords[i])))), biomeEnemies[i] + " <===", playerName
+        elif pythonShine == i and playerName == i:
+            print "You're in PythonShine!"
         else:
             print i , " " * (5-(len(str(i)))), biomeDiamonds[i], " " * (5-(len(str(biomeDiamonds[i])))), \
-                  biomeSwords[i], " " * (5-(len(str(biomeSwords[i])))), biomeEnemies[i]
+              biomeSwords[i], " " * (5-(len(str(biomeSwords[i])))), biomeEnemies[i]
 
 def pythonShineGenerator():
     global pythonShine
@@ -153,12 +162,39 @@ def pythonShineGenerator():
         pythonShine = random.randint(1, 7)
     return pythonShine
 
+def playerStats(godMode):
+    global playerHealth
+    playerHealth = ""
+    if godMode == True:
+        playerHealth = input("What is your initial health? (Pick a number between 10 and 50) ")
+    if godMode == False:
+        playerHealth = 10* (random.randint(1,5))
+    return playerHealth
 
-# EXECUTION
+def numberTurns():
+    global maximumTurns
+    maximumTurns = ""
+    maximumTurns = input("How many turns do you want to play (maximum)? ")
+    return maximumTurns
+
+def turnCounter():
+    global turnNumber
+    turnNumber = 1
+    print "Starting turn number", turnNumber
+    turnNumber += 1
+    return turnNumber
+
+# EXECUTION TOP LEVEL
 
 gameStart()
-enterInfo()
 readFile("biomesData1.txt")
 biomeDataParser(localList)
 pythonShineGenerator()
-biomeTable(pythonShine)
+biomeTable(pythonShine, playerName)
+enterInfo()
+playerStats(godMode)
+numberTurns()
+
+# WHILE LOOP
+turnCounter()
+
