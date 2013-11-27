@@ -7,32 +7,52 @@ import turtle as t
 # VARIABLES
 
 godMode = ""
-biomePosition = ""
+playerPos = 0
+biomeData = []
+biomeDiamonds = []
+biomeSwords = []
+biomeEnemies = []
+localList = []
 fillColor = "tan"
 catastropheNumber = 0
+pythonShine = ""
+playerName = ""
+startGame = ""
 
 # FUNCTIONS
 
 def gameStart():
+    global startGame
+    startGame = ""
+    while startGame != "y":
+        startGame = raw_input("Would you like to play a game (y/n)? ")
+        
     global godMode
     godMode = ""
     while godMode == "":
         godModeInput = raw_input("Would you like to manually choose biomes (y/n)? ")
         if godModeInput == "y":
-            godMode = 1
+            godMode = True
         elif godModeInput == "n":
-            godMode = 0
+            godMode = False
         else:
             print "Please enter y for yes or n for no."
     return godMode
 
+def enterInfo():
+    global playerName
+    playerName = ""
+    while playerName == "":
+        playerName = raw_input("What is the name of your character? ")
+    return playerName
+
 def biomePositionGenerator(godMode):
-    global biomePosition
-    biomePosition = ""
-    if godMode == 1:
-        biomePosition = input("Which biome would you like to go to (Pick a number between 1 and 7)? ")
-    if godMode == 0:
-        biomePosition = random.randint(1,7)
+    global playerPos
+    playerPos = 0
+    if godMode == True:
+        playerPos = input("Which biome would you like to go to (Pick a number between 1 and 7)? ")
+    if godMode == False:
+        playerPos = random.randint(1,7)
     return biomePosition
 
 def biomeDraw(fillColor):
@@ -56,7 +76,7 @@ def playerDraw():
     t.end_fill()
         
 def drawBoard(catastropheNumber):
-    biomeDraw() * (7 - catastropheNumber)
+    biomeDraw() * (8 - catastropheNumber)
 
 def drawPlayer(biomeNumber):
     t.penup()
@@ -64,7 +84,7 @@ def drawPlayer(biomeNumber):
     t.forward((biomeNumber - 1) * 50)
     playerDraw()
 
-def read_string_list_from_file(the_file):
+def readFile(the_file):
     '''
     CODE PROVIDED TO INCORPORATE
     
@@ -83,6 +103,7 @@ def read_string_list_from_file(the_file):
     '''
     
     fileRef = open(the_file,"r") # opening file to be read
+    global localList
     localList=[]
     for line in fileRef:
         string = line[0:len(line)-1]  # eliminates trailing '\n'
@@ -101,35 +122,43 @@ def read_string_list_from_file(the_file):
         
     return localList
 
-
-def create_lists_board(listStrings):
+def biomeDataParser(localList):
+    for i in range(len(localList)):                 #wow, much comments
+        biomeData.append(localList[i].split("-"))    # many biome lists, wow. 
+    for j in range(len(biomeData)):
+        for k in range(1):
+            biomeDiamonds.append(biomeData[j][k])
+            biomeSwords.append(biomeData[j][k+1])
+            biomeEnemies.append(biomeData[j][k+2])
     
-    '''
-    RECOMMENDED
-    '''
-    # your code...   
-    
-    return #.... as many lists as needed to represent the board
-           # one for the diamonds values, etc.
+
+def biomeTable(pythonShine):
+    print "The current board state is as follows:"
+    print "Biome Diamd Sword Enemy"
+    for i in range(len(biomeData)):
+        if pythonShine == i:
+            print i , " " * (5-(len(str(i)))), biomeDiamonds[i], " " * (5-(len(str(biomeDiamonds[i])))), \
+              biomeSwords[i], " " * (5-(len(str(biomeSwords[i])))), biomeEnemies[i] + "  <=== PythonShine"
+        else:
+            print i , " " * (5-(len(str(i)))), biomeDiamonds[i], " " * (5-(len(str(biomeDiamonds[i])))), \
+                  biomeSwords[i], " " * (5-(len(str(biomeSwords[i])))), biomeEnemies[i]
+
+def pythonShineGenerator():
+    global pythonShine
+    pythonShine = ""
+    if godMode == True:
+        pythonShine = input("Where do you want to place PythonShine? (Pick a number from 2 to 8) ")
+        pythonShine += -1
+    elif godMode == False:
+        pythonShine = random.randint(1, 7)
+    return pythonShine
 
 
+# EXECUTION
 
-def show_board(mssg):
-    '''
-    RECOMMENDED
-    '''
-    print "\nShowing board... " + mssg 
-    print "\n The board at this point contains..."
-
-    # your code... 
-
-def biomeGenerator(localList):
-    for i in range(len(localList)):
-        biomeData = localList[i].split("-")
-    for j in range(0, (len(biomeData)), 3):
-        biomeDiamonds = biomeData[i]
-    for k in range(1, (len(biomeData)), 3):
-        biomeSwords = biomeData[i]
-    for l in range(2, (len(biomeData)), 3):
-        biomeEnemies = biomeData[i]
-    
+gameStart()
+enterInfo()
+readFile("biomesData1.txt")
+biomeDataParser(localList)
+pythonShineGenerator()
+biomeTable(pythonShine)
