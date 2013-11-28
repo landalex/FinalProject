@@ -7,7 +7,7 @@ import turtle as t
 # VARIABLES
 
 godMode = ""
-playerPos = ""
+playerPos = -1
 biomeData = []
 biomeDiamonds = []
 biomeSwords = []
@@ -23,6 +23,8 @@ catastrophe = ""
 maximumTurns = ""
 turnNumber = 0
 playerSword = 0
+playerDiamonds = 0
+gameOn = False
 
 # FUNCTIONS
 
@@ -56,12 +58,15 @@ def enterInfo():
     global maximumTurns
     maximumTurns = input("How many turns do you want to play (maximum)? ")
 
+    global playerPos
+    playerPos = 0
+
     
     
 def turnGenerator():
     global playerPos
     global turnNumber
-    if turnNumber > 0:
+    if turnNumber >= 0:
         if godMode == True:
             playerPos = input("Which biome would you like to go to (Pick a number between 1 and 7)? ")
         if godMode == False:
@@ -147,9 +152,9 @@ def biomeDataParser(localList):
         biomeData.append(localList[i].split("-"))    # many biome lists, wow. 
     for j in range(len(biomeData)):
         for k in range(1):
-            biomeDiamonds.append(biomeData[j][k])
-            biomeSwords.append(biomeData[j][k+1])
-            biomeEnemies.append(biomeData[j][k+2])
+            biomeDiamonds.append(int(biomeData[j][k]))
+            biomeSwords.append(int(biomeData[j][k+1]))
+            biomeEnemies.append(int(biomeData[j][k+2]))
     
 
 def biomeTable():
@@ -158,10 +163,13 @@ def biomeTable():
     for i in range(len(biomeData)):
         if pythonShine == i:
             print i , " " * (5-(len(str(i)))), biomeDiamonds[i], " " * (5-(len(str(biomeDiamonds[i])))), \
-              biomeSwords[i], " " * (5-(len(str(biomeSwords[i])))), biomeEnemies[i] + "  <=== PythonShine"
-        elif playerPos == i:
+              biomeSwords[i], " " * (5-(len(str(biomeSwords[i])))), biomeEnemies[i], "  <=== PythonShine"
+        elif playerPos == i and turnNumber >= 0:
             print i , " " * (5-(len(str(i)))), biomeDiamonds[i], " " * (5-(len(str(biomeDiamonds[i])))), \
-                  biomeSwords[i], " " * (5-(len(str(biomeSwords[i])))), biomeEnemies[i] + " <===", playerName
+                  biomeSwords[i], " " * (5-(len(str(biomeSwords[i])))), biomeEnemies[i], " <===", playerName
+        elif playerPos == i and turnNumber < 0:
+            print i , " " * (5-(len(str(i)))), biomeDiamonds[i], " " * (5-(len(str(biomeDiamonds[i])))), \
+                  biomeSwords[i], " " * (5-(len(str(biomeSwords[i])))), biomeEnemies[i]
         elif pythonShine == i and playerName == i:
             print "You're in PythonShine!"
         else:
@@ -178,14 +186,46 @@ def pythonShineGenerator():
 
 def combatCalculator():
     global playerSword
+    global playerHealth
     if biomeSwords[playerPos] > playerSword:
         playerSword = biomeSwords[playerPos]
+        print playerName, "has picked up a level", playerSword, "sword!"
     if playerSword > biomeEnemies[playerPos]:
-        playerHealth += random.randint(1, playerHealth)
+        healthGain = random.randint(1, playerHealth)
+        playerHealth += healthGain
+        print playerName, "won the fight and gained", healthGain, "health!"
     if biomeEnemies[playerPos] > playerSword:
-        playerHealth -= random.randint(1, playerHealth)
-    if playerSword = biomeEnemies[playerPos]:
-        playerHealth -= random.randint(1, (playerHealth / 2))
+        healthLost = random.randint(1, playerHealth)
+        playerHealth -= healthLost
+        print playerName, "lost the fight and lost", healthLost, "health."
+    if playerSword == biomeEnemies[playerPos]:
+        healthLost = random.randint(1, (playerHealth / 2))
+        playerHealth -= healthLost
+        print playerName, "tied the fight, but lost", healthLost, "health."
+        
+
+def diamondCalculator():
+    global playerDiamonds
+    if playerPos == pythonShine:
+        playerDiamonds = 9999
+    else:
+        playerDiamonds += (biomeDiamonds[playerPos])/3
+        print playerName, "has collected", (biomeDiamonds[playerPos]/3), "diamonds!"
+
+def playerInfo():
+    print playerName + " currently has:"
+    print playerHealth, "health."
+    print playerDiamonds, "diamonds."
+    if playerSword == 0:
+        print "No sword."
+    else:
+        "A level", playerSword, "sword."
+    if playerPos == "":
+        print "And is about to spawn."
+    else:
+        print "And is in position", playerPos
+    
+
     
 
 # EXECUTION TOP LEVEL
@@ -198,5 +238,8 @@ biomeTable()
 enterInfo()
 
 # WHILE LOOP
-
-
+biomeTable()
+playerInfo()
+turnGenerator()
+diamondCalculator()
+combatCalculator()
