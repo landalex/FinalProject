@@ -22,6 +22,7 @@ playerHealth = ""
 catastrophe = ""
 maximumTurns = ""
 turnNumber = 1
+playerSword = 0
 
 # FUNCTIONS
 
@@ -32,7 +33,6 @@ def gameStart():
         startGame = raw_input("Would you like to play a game (y/n)? ")
         
     global godMode
-    godMode = ""
     while godMode == "":
         godModeInput = raw_input("Would you like to manually choose biomes (y/n)? ")
         if godModeInput == "y":
@@ -41,23 +41,18 @@ def gameStart():
             godMode = False
         else:
             print "Please enter y for yes or n for no."
-    return godMode
 
 def enterInfo():
     global playerName
-    playerName = ""
     while playerName == "":
         playerName = raw_input("What is the name of your character? ")
-    return playerName
 
 def biomePositionGenerator(godMode):
     global playerPos
-    playerPos = ""
     if godMode == True:
         playerPos = input("Which biome would you like to go to (Pick a number between 1 and 7)? ")
     if godMode == False:
         playerPos = random.randint(1,7)
-    return biomePosition
 
 def biomeDraw(fillColor):
         t.fillcolor(fillColor)
@@ -154,35 +149,33 @@ def biomeTable(pythonShine, playerName):
 
 def pythonShineGenerator():
     global pythonShine
-    pythonShine = ""
     if godMode == True:
         pythonShine = input("Where do you want to place PythonShine? (Pick a number from 2 to 8) ")
         pythonShine += -1
     elif godMode == False:
         pythonShine = random.randint(1, 7)
-    return pythonShine
 
 def playerStats(godMode):
     global playerHealth
-    playerHealth = ""
     if godMode == True:
         playerHealth = input("What is your initial health? (Pick a number between 10 and 50) ")
     if godMode == False:
         playerHealth = 10* (random.randint(1,5))
-    return playerHealth
 
 def numberTurns():
     global maximumTurns
-    maximumTurns = ""
     maximumTurns = input("How many turns do you want to play (maximum)? ")
-    return maximumTurns
 
 def turnCounter():
     global turnNumber
-    turnNumber = 1
     print "Starting turn number", turnNumber
     turnNumber += 1
-    return turnNumber
+
+def combatCalculator(playerHealth, biomeSwords, biomeEnemies, playerPos):
+    global playerSword
+    if biomeSwords[playerPos] > playerSword:
+        playerSword = biomeSwords[playerPos]
+    
 
 # EXECUTION TOP LEVEL
 
