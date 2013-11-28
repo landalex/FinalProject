@@ -21,7 +21,7 @@ startGame = ""
 playerHealth = ""
 catastrophe = ""
 maximumTurns = ""
-turnNumber = 1
+turnNumber = 0
 playerSword = 0
 
 # FUNCTIONS
@@ -43,16 +43,33 @@ def gameStart():
             print "Please enter y for yes or n for no."
 
 def enterInfo():
+    global playerHealth
+    if godMode == True:
+        playerHealth = input("What is your initial health? (Pick a number between 10 and 50) ")
+    if godMode == False:
+        playerHealth = 10* (random.randint(1,5))
+        
     global playerName
     while playerName == "":
         playerName = raw_input("What is the name of your character? ")
+        
+    global maximumTurns
+    maximumTurns = input("How many turns do you want to play (maximum)? ")
 
-def biomePositionGenerator(godMode):
+    
+    
+def turnGenerator():
     global playerPos
-    if godMode == True:
-        playerPos = input("Which biome would you like to go to (Pick a number between 1 and 7)? ")
-    if godMode == False:
-        playerPos = random.randint(1,7)
+    global turnNumber
+    if turnNumber > 0:
+        if godMode == True:
+            playerPos = input("Which biome would you like to go to (Pick a number between 1 and 7)? ")
+        if godMode == False:
+            playerPos = random.randint(1,7)
+        
+    turnNumber += 1
+    print "Starting turn number", turnNumber
+    
 
 def biomeDraw(fillColor):
         t.fillcolor(fillColor)
@@ -122,6 +139,10 @@ def readFile(the_file):
     return localList
 
 def biomeDataParser(localList):
+    global biomeData
+    global biomeDiamonds
+    global biomeSwords
+    global biomeEnemies
     for i in range(len(localList)):                 #wow, much comments
         biomeData.append(localList[i].split("-"))    # many biome lists, wow. 
     for j in range(len(biomeData)):
@@ -131,7 +152,7 @@ def biomeDataParser(localList):
             biomeEnemies.append(biomeData[j][k+2])
     
 
-def biomeTable(pythonShine, playerName):
+def biomeTable():
     print "The current board state is as follows:"
     print "Biome Diamd Sword Enemy"
     for i in range(len(biomeData)):
@@ -155,26 +176,16 @@ def pythonShineGenerator():
     elif godMode == False:
         pythonShine = random.randint(1, 7)
 
-def playerStats(godMode):
-    global playerHealth
-    if godMode == True:
-        playerHealth = input("What is your initial health? (Pick a number between 10 and 50) ")
-    if godMode == False:
-        playerHealth = 10* (random.randint(1,5))
-
-def numberTurns():
-    global maximumTurns
-    maximumTurns = input("How many turns do you want to play (maximum)? ")
-
-def turnCounter():
-    global turnNumber
-    print "Starting turn number", turnNumber
-    turnNumber += 1
-
-def combatCalculator(playerHealth, biomeSwords, biomeEnemies, playerPos):
+def combatCalculator():
     global playerSword
     if biomeSwords[playerPos] > playerSword:
         playerSword = biomeSwords[playerPos]
+    if playerSword > biomeEnemies[playerPos]:
+        playerHealth += random.randint(1, playerHealth)
+    if biomeEnemies[playerPos] > playerSword:
+        playerHealth -= random.randint(1, playerHealth)
+    if playerSword = biomeEnemies[playerPos]:
+        playerHealth -= random.randint(1, (playerHealth / 2))
     
 
 # EXECUTION TOP LEVEL
@@ -183,11 +194,9 @@ gameStart()
 readFile("biomesData1.txt")
 biomeDataParser(localList)
 pythonShineGenerator()
-biomeTable(pythonShine, playerName)
+biomeTable()
 enterInfo()
-playerStats(godMode)
-numberTurns()
 
 # WHILE LOOP
-turnCounter()
+
 
