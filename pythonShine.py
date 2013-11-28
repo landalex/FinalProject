@@ -61,6 +61,9 @@ def enterInfo():
     global playerPos
     playerPos = 0
 
+    global gameOn
+    gameOn = True
+
     
     
 def turnGenerator():
@@ -74,6 +77,7 @@ def turnGenerator():
         
     turnNumber += 1
     print "Starting turn number", turnNumber
+    print playerName, "has travelled to position", playerPos
     
 
 def biomeDraw(fillColor):
@@ -225,7 +229,14 @@ def playerInfo():
     else:
         print "And is in position", playerPos
     
-
+def gameCheck():
+    global gameOn
+    #if playerPos == pythonShine:
+       # gameOn = False
+    if playerHealth <= 0:
+        gameOn = False
+    if turnNumber == maximumTurns:
+        gameOn = False
     
 
 # EXECUTION TOP LEVEL
@@ -238,8 +249,12 @@ biomeTable()
 enterInfo()
 
 # WHILE LOOP
-biomeTable()
+while gameOn == True:
+    biomeTable()
+    playerInfo()
+    turnGenerator()
+    diamondCalculator()
+    combatCalculator()
+    gameCheck()
+
 playerInfo()
-turnGenerator()
-diamondCalculator()
-combatCalculator()
