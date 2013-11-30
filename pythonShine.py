@@ -30,6 +30,7 @@ gameOn = True
 gameOnInput = ""
 catastrophePos = ""
 biomeList = []
+t.speed(0)
 
 # FUNCTIONS
 
@@ -95,10 +96,10 @@ def turnGenerator():
         if godMode == False:
             playerPosInput = raw_input("Are you ready for the next turn? (y/n) ")
             if playerPosInput == "y":
-                playerPos = ((playerPos + random.randint(1,6)) % 8)
+                playerPos = ((playerPos + random.randint(1,6)) % (len(biomeList))
             elif playerPosInput != "y":
                 print "Tricked you, there was never a choice."
-                playerPos = ((playerPos + random.randint(1,6)) % 8)
+                playerPos = ((playerPos + random.randint(1,6)) % (len(biomeList))
         
     turnNumber += 1
     print "Starting turn number", turnNumber
@@ -122,16 +123,30 @@ def biomeDraw(fillColor):
 def playerDraw():
     t.fillcolor("red")
     t.begin_fill()
-    t.circle(50)
+    t.circle(10)
     t.end_fill()
         
-def drawBoard(catastropheNumber):
-    biomeDraw() * (8 - catastropheNumber)
-
-def drawPlayer(biomeNumber):
+def drawBoard():
+    global catastropheNumber
     t.penup()
-    t.forward(25)
-    t.forward((biomeNumber - 1) * 50)
+    t.forward(-300)
+    t.pendown()
+    for i in range((8 - catastropheNumber)):
+        if i == pythonShine and godMode == True:
+            biomeDraw("green")
+        else:
+            biomeDraw("tan")
+    t.home()
+    
+def drawPlayer():
+    global playerPos
+    t.penup()
+    t.forward(-275)
+    t.right(90)
+    t.forward(50)
+    t.left(90)
+    if playerPos >= 0:
+        t.forward((playerPos) * 70)
     playerDraw()
 
 def readFile(the_file):
@@ -248,7 +263,10 @@ def combatCalculator():
         playerHealth += healthGain
         print playerName, "won the fight and gained", healthGain, "health!"
     if biomeEnemies[playerPos] > playerSword:
-        healthLost = random.randint(1, playerHealth)
+        if playerHealth > 1:
+            healthLost = random.randint(1, playerHealth)
+        if playerHealth == 1:
+            healthLost = random.randint(0,1)
         playerHealth -= healthLost
         print playerName, "lost the fight and lost", healthLost, "health."
     if playerSword == biomeEnemies[playerPos]:
@@ -269,6 +287,7 @@ def playerInfo():
     global playerSword
     global gameOn
     global gameOnInput
+    global roundOn
     if roundOn == True:
         print playerName + " currently has:"
         print playerHealth, "health."
@@ -281,11 +300,12 @@ def playerInfo():
             print "And is about to spawn."
         else:
             print "And is in position", playerPos
+        print "=========================================================="
             
     elif roundOn == False:
         print "Game Over!"
         if playerHealth <= 0:
-            print playerName + "has died."
+            print playerName + " has died."
         elif playerDiamonds == 9999:
             print playerName + "has won!"
         elif turnNumber == maximumTurns:
@@ -297,15 +317,21 @@ def playerInfo():
             print "No sword."
         else:
             "A level", playerSword, "sword."
+        print "=========================================================="
 
-    if gameOn == True:
-        gameOnInput = raw_input("Would you like to play another game? (y/n) ")
-        while gameOnInput != "y" or gameOnInput != "n":
-            print "Please input y for yes or n for no."
-        if gameOnInput == "y":
-            gameOn = True
-        if gameOnInput == "n":
-            gameOn = False
+    if gameOn == True and roundOn == False:
+        while gameOnInput == "" and gameOn == True:
+            gameOnInput = raw_input("Would you like to play another game? (y/n) ")
+            if gameOnInput == "y":
+                gameOn = True
+                roundOn = True
+            elif gameOnInput == "n":
+                gameOn = False
+                print "Thanks for nothing."
+            else:
+                print "Please input y for yes or n for no."
+                gameOnInput = ""
+
 
             
 def gameCheck():
@@ -321,16 +347,17 @@ def catastropheGenerator():
     global catastrophePos
     global catastropheNumber
     catastrophePos = (7 / 5) * (random.randint(1,7))
-    for i in range(len(biomeList)):
-        if catastrophePos == biomeList[i]:
+    for i in range(catastrophePos):
+        if catastrophePos == biomeList[i]:   
             catastropheNumber += 1
             print "A catastrophe has occured in biome", catastrophePos
             print "Biome", catastrophePos, "has been destroyed!"
-            biomelist.remove(catastrophePos)
+            biomeList.remove(catastrophePos)
+            catastropheNumber += 1
             if playerPos == catastrophePos:
                 playerHealth == 0
                 print playerName, "has been caught in the catastrophe!"
-                
+                    
 # EXECUTION TOP LEVEL
 
 gameStart()
@@ -346,16 +373,22 @@ enterInfo()
 # WHILE LOOP
 while gameOn == True:
     while roundOn == True:
+        t.speed(0)
         print 
         biomeTable()
         print 
         playerInfo()
+        drawBoard()
+        drawPlayer()
         print 
         turnGenerator()
         diamondCalculator()
         combatCalculator()
+        print 
         catastropheGenerator()
         gameCheck()
+        t.clearscreen()
 
     print 
     playerInfo()
+
