@@ -6,36 +6,36 @@ import turtle as t
 
 # VARIABLES
 
-godMode = ""
-playerPos = -1
-biomeData = []
-biomeDiamonds = []
-biomeSwords = []
-biomeEnemies = []
-localList = []
-fillColor = "tan"
-catastropheNumber = 0
-pythonShine = ""
-playerName = ""
-startGame = ""
-playerHealth = 0
-catastrophe = ""
-maximumTurns = 0
-turnNumber = 0
-playerSword = 0
-playerDiamonds = 0
-roundOn = False
-playerPosInput = ""
-gameOn = True
-gameOnInput = ""
-catastrophePos = ""
-biomeList = []
-t.speed(0)
+godMode = ""                # Determines if player should choose their own position/health etc
+playerPos = -1               # Indicates position of the player
+biomeData = []              # Holds information about all of the biomes (to be parsed)
+biomeDiamonds = []          # Holds number of diamonds in each biome
+biomeSwords = []            # Holds level of sword in each biome
+biomeEnemies = []           # Holds level of enemy sword in each
+localList = []                  # Contains all info from the text file
+fillColor = "tan"               # Default fill color of the biomes (For turtles)
+catastropheNumber = 0       # Number of catastrophes occured (for positioning turtles)
+pythonShine = ""            # Indicates position of PythonShine
+playerName = ""             # Holds player name
+startGame = ""              # Indicates if game should begin
+playerHealth = 0            # Indicates current health of the player
+catastrophe = ""            # idk
+maximumTurns = 0          # Indicates maximum number of turns to play
+turnNumber = 0            # Indicates current turn number
+playerSword = 0            # Indicates level of player's sword
+playerDiamonds = 0        # Indicates number of player's diamonds
+roundOn = False           # Indicates whether the game should loop for another turn, or restart
+playerPosInput = ""         # Holds string from user choosing their own position
+gameOn = True            # Indicates whether the game should end completely
+gameOnInput = ""        # Holds string from user choosing to play again or not
+catastrophePos = ""         # Indicates the position of a catastrophe
+biomeList = []              # Holds a list of all currently active biomes (minus catastrophe biomes)
+
 
 # FUNCTIONS
 
-def gameStart():
-    global startGame
+def gameStart():            # This function initializes the game, and defines godMode (allows
+    global startGame       # user to choose their own biomes etc)
     counter = 0
     while startGame != "y":
         startGame = raw_input("Would you like to play a game (y/n)? ")
@@ -55,7 +55,7 @@ def gameStart():
         else:
             print "Please enter y for yes or n for no."
 
-def enterInfo():
+def enterInfo():            # Gets player to enter information like health, name and max turns
     global playerHealth
     while playerHealth < 10 or playerHealth > 50:
         if godMode == True:
@@ -75,6 +75,16 @@ def enterInfo():
         if maximumTurns <= 0:
             print "Please input a value greater than 0."
 
+    global catastrophe
+    while catastrophe == "":
+        catastropheInput = raw_input("Would you like to allow catastrophes (y/n)? ")
+        if catastropheInput == "y":
+            catastrophe = True
+        elif catastropheInput == "n":
+            catastrophe = False
+        else:
+            print "Please enter y for yes or n for no."
+
     global playerPos
     playerPos = 0
 
@@ -83,7 +93,7 @@ def enterInfo():
 
     
     
-def turnGenerator():
+def turnGenerator():        # Generates the "dice rolling" every turn, or allows player to choose
     global playerPos
     global turnNumber
     global playerPosInput
@@ -96,17 +106,17 @@ def turnGenerator():
         if godMode == False:
             playerPosInput = raw_input("Are you ready for the next turn? (y/n) ")
             if playerPosInput == "y":
-                playerPos = ((playerPos + random.randint(1,6)) % (len(biomeList))
+                playerPos = ((playerPos + random.randint(1,6)) % (len(biomeList)))
             elif playerPosInput != "y":
                 print "Tricked you, there was never a choice."
-                playerPos = ((playerPos + random.randint(1,6)) % (len(biomeList))
+                playerPos = ((playerPos + random.randint(1,6)) % (len(biomeList)))
         
     turnNumber += 1
     print "Starting turn number", turnNumber
     print playerName, "has travelled to position", playerPos
     
 
-def biomeDraw(fillColor):
+def biomeDraw(fillColor):       # Turtle function to draw an individual biome
         t.fillcolor(fillColor)
         t.begin_fill()
         t.forward(50)
@@ -120,13 +130,13 @@ def biomeDraw(fillColor):
         t.end_fill()
         t.forward(70)
 
-def playerDraw():
+def playerDraw():           # Turtle function to draw the player 
     t.fillcolor("red")
     t.begin_fill()
     t.circle(10)
     t.end_fill()
         
-def drawBoard():
+def drawBoard():            # Turtle function to draw the entire board
     global catastropheNumber
     t.penup()
     t.forward(-300)
@@ -138,7 +148,7 @@ def drawBoard():
             biomeDraw("tan")
     t.home()
     
-def drawPlayer():
+def drawPlayer():       # Turtle function to position the turtle, so the player can be drawn correctly
     global playerPos
     t.penup()
     t.forward(-275)
@@ -149,7 +159,7 @@ def drawPlayer():
         t.forward((playerPos) * 70)
     playerDraw()
 
-def readFile(the_file):
+def readFile(the_file):     # Reads the text file in the same directory as this script
     '''
     CODE PROVIDED TO INCORPORATE
     
@@ -187,14 +197,14 @@ def readFile(the_file):
         
     return localList
 
-def biomeDataParser(localList):
-    global biomeData
+def biomeDataParser(localList):     # Parses text file, and seperates in to lists of each item
+    global biomeData             # such as Diamonds, Swords and Enemies
     global biomeDiamonds
     global biomeSwords
     global biomeEnemies
     global biomeList
-    for i in range(len(localList)):                 #wow, much comments
-        biomeData.append(localList[i].split("-"))    # many biome lists, wow. 
+    for i in range(len(localList)):
+        biomeData.append(localList[i].split("-")) 
     for j in range(len(biomeData)):
         for k in range(1):
             biomeDiamonds.append(int(biomeData[j][k]))
@@ -202,7 +212,7 @@ def biomeDataParser(localList):
             biomeEnemies.append(int(biomeData[j][k+2]))
             biomeList.append(j)
 
-def biomeTable():
+def biomeTable():           # Draws the table indicating information for each biome
     print "The current board state is as follows:"
     print "Biome Diamd Sword Enemy"
     for i in range(len(biomeList)):
@@ -239,7 +249,7 @@ def biomeTable():
                 print biomeList[i] , " " * (5-(len(str(i)))), biomeDiamonds[i], " " * (5-(len(str(biomeDiamonds[i])))), \
                   biomeSwords[i], " " * (5-(len(str(biomeSwords[i])))), biomeEnemies[i]
 
-def pythonShineGenerator():
+def pythonShineGenerator():         # Generates the PythonShine position
     global pythonShine
     if godMode == True:
         while pythonShine < 1 or pythonShine > 7:
@@ -250,8 +260,8 @@ def pythonShineGenerator():
     elif godMode == False:
         pythonShine = random.randint(1, 7)
 
-def combatCalculator():
-    global playerSword
+def combatCalculator():         # Calculates sword pickups, and combat scenarios
+    global playerSword         # (adds or subtracts player health)
     global playerHealth
     if biomeSwords[playerPos] > playerSword:
         tempSword = playerSword
@@ -275,7 +285,7 @@ def combatCalculator():
         print playerName, "tied the fight, but lost", healthLost, "health."
         
 
-def diamondCalculator():
+def diamondCalculator():        # Calculates number of diamonds picked up in each biome
     global playerDiamonds
     if playerPos == pythonShine:
         playerDiamonds = 9999
@@ -283,8 +293,8 @@ def diamondCalculator():
         playerDiamonds += (biomeDiamonds[playerPos])/3
         print playerName, "has collected", (biomeDiamonds[playerPos]/3), "diamonds!"
 
-def playerInfo():
-    global playerSword
+def playerInfo():               # Displays information about the player's current stats, 
+    global playerSword        # and prompts player to play again if dead
     global gameOn
     global gameOnInput
     global roundOn
@@ -307,10 +317,10 @@ def playerInfo():
         if playerHealth <= 0:
             print playerName + " has died."
         elif playerDiamonds == 9999:
-            print playerName + "has won!"
+            print playerName + " has won!"
         elif turnNumber == maximumTurns:
             print "The maximum number of turns has been reached."
-        print playerName + " ended the game with:"
+        print playerName + " ended the round with:"
         print playerHealth, "health."
         print playerDiamonds, "diamonds."
         if playerSword == 0:
@@ -334,8 +344,8 @@ def playerInfo():
 
 
             
-def gameCheck():
-    global roundOn
+def gameCheck():            # Checks if the game should continue, or end (if player is dead,
+    global roundOn          # max turns reached, or player is in PythonShine)
     if playerPos == pythonShine:
         roundOn = False
     if playerHealth <= 0:
@@ -343,7 +353,7 @@ def gameCheck():
     if turnNumber == maximumTurns:
         roundOn = False
     
-def catastropheGenerator():
+def catastropheGenerator():     # Generates position of catastrophes, and removes the biome
     global catastrophePos
     global catastropheNumber
     catastrophePos = (7 / 5) * (random.randint(1,7))
@@ -384,8 +394,9 @@ while gameOn == True:
         turnGenerator()
         diamondCalculator()
         combatCalculator()
-        print 
-        catastropheGenerator()
+        print
+        if catastrophe == True:
+            catastropheGenerator()
         gameCheck()
         t.clearscreen()
 
