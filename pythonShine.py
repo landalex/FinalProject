@@ -18,19 +18,17 @@ catastropheNumber = 0       # Number of catastrophes occured (for positioning tu
 pythonShine = ""            # Indicates position of PythonShine
 playerName = ""             # Holds player name
 startGame = ""              # Indicates if game should begin
-playerHealth = 0            # Indicates current health of the player
-catastrophe = ""            # idk
-maximumTurns = 0          # Indicates maximum number of turns to play
+playerHealth = ""            # Indicates current health of the player
+catastrophe = ""            # Indicates whether the player wants catastrophes to occur or not
+maximumTurns = ""          # Indicates maximum number of turns to play
 turnNumber = 0            # Indicates current turn number
 playerSword = 0            # Indicates level of player's sword
 playerDiamonds = 0        # Indicates number of player's diamonds
 roundOn = False           # Indicates whether the game should loop for another turn, or restart
-playerPosInput = ""         # Holds string from user choosing their own position
 gameOn = True            # Indicates whether the game should end completely
-gameOnInput = ""        # Holds string from user choosing to play again or not
 catastrophePos = ""         # Indicates the position of a catastrophe
 biomeList = []              # Holds a list of all currently active biomes (minus catastrophe biomes)
-
+fileName = "biomesData1.txt" # Holds the name of the text file with biome information
 
 # FUNCTIONS
 
@@ -55,13 +53,18 @@ def gameStart():            # This function initializes the game, and defines go
         else:
             print "Please enter y for yes or n for no."
 
+    global fileName
+    fileName = raw_input("Would you like to use your own biome text file? If yes, type the file name (including '.txt'). Otherwise, type 'n'. ")
+    if fileName == "n":
+        fileName = "biomesData1.txt"
+
 def enterInfo():            # Gets player to enter information like health, name and max turns
     global playerHealth
-    while playerHealth < 10 or playerHealth > 50:
+    while playerHealth == "":
         if godMode == True:
-            playerHealth = input("What is your initial health? (Pick a number between 10 and 50) ")
-            if playerHealth < 10 or playerHealth > 50:
-                print "Please pick a value between 10 and 50."
+            while playerHealth.isdigit() == False or int(playerHealth) < 10 or int(playerHealth) > 50:
+                playerHealth = raw_input("What is your initial health? (Pick a number between 10 and 50) ")
+            playerHealth = int(playerHealth)
         if godMode == False:
             playerHealth = 10* (random.randint(1,5))
         
@@ -70,10 +73,9 @@ def enterInfo():            # Gets player to enter information like health, name
         playerName = raw_input("What is the name of your character? ")
         
     global maximumTurns
-    while maximumTurns <= 0:
-        maximumTurns = input("How many turns do you want to play (maximum)? ")
-        if maximumTurns <= 0:
-            print "Please input a value greater than 0."
+    while maximumTurns.isdigit() == False or int(maximumTurns) <= 0:
+        maximumTurns = raw_input("How many turns do you want to play (maximum)? ")
+    maximumTurns = int(maximumTurns)
 
     global catastrophe
     while catastrophe == "":
@@ -96,13 +98,12 @@ def enterInfo():            # Gets player to enter information like health, name
 def turnGenerator():        # Generates the "dice rolling" every turn, or allows player to choose
     global playerPos
     global turnNumber
-    global playerPosInput
     if turnNumber >= 0:
         if godMode == True:
-            playerPos = input("Which biome would you like to go to (Pick a number between 1 and 7)? ")
-            while playerPos <= 0 or playerPos > 7:
-                print "Please input a value between 1 and 7."
-                playerPos = input("Which biome would you like to go to (Pick a number between 1 and 7)? ")
+            playerPos = raw_input("Which biome would you like to go to (Pick a number between 1 and 7)? ")
+            while str(playerPos).isdigit() == False or (int(playerPos) <= 0 or int(playerPos) > 7):
+                playerPos = raw_input("Which biome would you like to go to (Pick a number between 1 and 7)? ")
+            playerPos = int(playerPos)
         if godMode == False:
             playerPosInput = raw_input("Are you ready for the next turn? (y/n) ")
             if playerPosInput == "y":
@@ -219,16 +220,16 @@ def biomeTable():           # Draws the table indicating information for each bi
         if godMode == True:
             if pythonShine == i:
                 print biomeList[i] , " " * (5-(len(str(i)))), biomeDiamonds[i], " " * (5-(len(str(biomeDiamonds[i])))), \
-                  biomeSwords[i], " " * (5-(len(str(biomeSwords[i])))), biomeEnemies[i], "  <=== PythonShine"
+                  biomeSwords[i], " " * (5-(len(str(biomeSwords[i])))), biomeEnemies[i], " <=== PythonShine"
             elif playerPos == i and turnNumber >= 0:
                 print biomeList[i] , " " * (5-(len(str(i)))), biomeDiamonds[i], " " * (5-(len(str(biomeDiamonds[i])))), \
                     biomeSwords[i], " " * (5-(len(str(biomeSwords[i])))), biomeEnemies[i], " <===", playerName
             elif playerPos == i and turnNumber < 0:
                 print biomeList[i] , " " * (5-(len(str(i)))), biomeDiamonds[i], " " * (5-(len(str(biomeDiamonds[i])))), \
                       biomeSwords[i], " " * (5-(len(str(biomeSwords[i])))), biomeEnemies[i]
-            elif pythonShine == playerPos:
+            elif i == pythonShine and pythonShine == playerPos:
                 print biomeList[i] , " " * (5-(len(str(i)))), biomeDiamonds[i], " " * (5-(len(str(biomeDiamonds[i])))), \
-                  biomeSwords[i], " " * (5-(len(str(biomeSwords[i])))), biomeEnemies[i], "  <=== PythonShine", " <===", playerName
+                  biomeSwords[i], " " * (5-(len(str(biomeSwords[i])))), biomeEnemies[i], " <=== PythonShine", " <===", playerName
             else:
                 print biomeList[i] , " " * (5-(len(str(i)))), biomeDiamonds[i], " " * (5-(len(str(biomeDiamonds[i])))), \
                   biomeSwords[i], " " * (5-(len(str(biomeSwords[i])))), biomeEnemies[i]
@@ -242,9 +243,9 @@ def biomeTable():           # Draws the table indicating information for each bi
             elif playerPos == i and turnNumber < 0:
                 print biomeList[i] , " " * (5-(len(str(i)))), biomeDiamonds[i], " " * (5-(len(str(biomeDiamonds[i])))), \
                       biomeSwords[i], " " * (5-(len(str(biomeSwords[i])))), biomeEnemies[i]
-            elif pythonShine == playerPos:
+            elif i == pythonShine and pythonShine == playerPos:
                 print biomeList[i] , " " * (5-(len(str(i)))), biomeDiamonds[i], " " * (5-(len(str(biomeDiamonds[i])))), \
-                  biomeSwords[i], " " * (5-(len(str(biomeSwords[i])))), biomeEnemies[i], "  <=== PythonShine", " <===", playerName
+                  biomeSwords[i], " " * (5-(len(str(biomeSwords[i])))), biomeEnemies[i], " <=== PythonShine", " <===", playerName
             else:
                 print biomeList[i] , " " * (5-(len(str(i)))), biomeDiamonds[i], " " * (5-(len(str(biomeDiamonds[i])))), \
                   biomeSwords[i], " " * (5-(len(str(biomeSwords[i])))), biomeEnemies[i]
@@ -252,10 +253,9 @@ def biomeTable():           # Draws the table indicating information for each bi
 def pythonShineGenerator():         # Generates the PythonShine position
     global pythonShine
     if godMode == True:
-        while pythonShine < 1 or pythonShine > 7:
-            pythonShine = input("Where do you want to place PythonShine? (Pick a number from 1 to 7) ")
-            if pythonShine < 1 or pythonShine > 7:
-                print "Please input a value between 1 and 7."
+        while pythonShine.isdigit() == False or int(pythonShine) < 1 or int(pythonShine) > 7:
+            pythonShine = raw_input("Where do you want to place PythonShine? (Pick a number from 1 to 7) ")
+        pythonShine = int(pythonShine)
             
     elif godMode == False:
         pythonShine = random.randint(1, 7)
@@ -296,8 +296,8 @@ def diamondCalculator():        # Calculates number of diamonds picked up in eac
 def playerInfo():               # Displays information about the player's current stats, 
     global playerSword        # and prompts player to play again if dead
     global gameOn
-    global gameOnInput
     global roundOn
+    gameOnInput = ""
     if roundOn == True:
         print playerName + " currently has:"
         print playerHealth, "health."
@@ -316,8 +316,8 @@ def playerInfo():               # Displays information about the player's curren
         print "Game Over!"
         if playerHealth <= 0:
             print playerName + " has died."
-        elif playerDiamonds == 9999:
-            print playerName + " has won!"
+        elif playerPos == pythonShine:
+            print playerName + " has won! " + playerName + " has found PythonShine!"
         elif turnNumber == maximumTurns:
             print "The maximum number of turns has been reached."
         print playerName + " ended the round with:"
@@ -371,17 +371,18 @@ def catastropheGenerator():     # Generates position of catastrophes, and remove
 # EXECUTION TOP LEVEL
 
 gameStart()
-readFile("biomesData1.txt")
+readFile(fileName)
 biomeDataParser(localList)
 pythonShineGenerator()
 print 
 biomeTable()
 print 
-enterInfo()
+
 
 
 # WHILE LOOP
 while gameOn == True:
+    enterInfo()
     while roundOn == True:
         t.speed(0)
         print 
@@ -400,6 +401,7 @@ while gameOn == True:
         gameCheck()
         t.clearscreen()
 
+    print
+    biomeTable()
     print 
     playerInfo()
-
