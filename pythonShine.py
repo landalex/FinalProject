@@ -1,4 +1,4 @@
-# PYTHON LOL (Name a Work in Progess)
+# Much PythonShine
 # Created by Evan Chisholm and Alex Land
 
 import random
@@ -6,29 +6,29 @@ import turtle as t
 
 # VARIABLES
 
-godMode = ""                # Determines if player should choose their own position/health etc
-playerPos = -1               # Indicates position of the player
+startGame = ""              # Indicates if game should begin
+godMode = ""               # Determines if player should choose their own position/health etc
+fileName = "biomesData1.txt" # Holds the name of the text file with biome information
+fillColor = "tan"              # Default fill color of the biomes (For turtles)
+playerPos = -1              # Indicates position of the player
+playerName = ""            # Holds player name
+playerHealth = ""            # Indicates current health of the player
+playerSword = 0             # Indicates level of player's sword
+playerDiamonds = 0         # Indicates number of player's diamonds
 biomeData = []              # Holds information about all of the biomes (to be parsed)
-biomeDiamonds = []          # Holds number of diamonds in each biome
+biomeDiamonds = []         # Holds number of diamonds in each biome
 biomeSwords = []            # Holds level of sword in each biome
 biomeEnemies = []           # Holds level of enemy sword in each
-localList = []                  # Contains all info from the text file
-fillColor = "tan"               # Default fill color of the biomes (For turtles)
-catastropheNumber = 0       # Number of catastrophes occured (for positioning turtles)
-pythonShine = ""            # Indicates position of PythonShine
-playerName = ""             # Holds player name
-startGame = ""              # Indicates if game should begin
-playerHealth = ""            # Indicates current health of the player
-catastrophe = ""            # Indicates whether the player wants catastrophes to occur or not
+biomeList = []               # Holds a list of all currently active biomes (minus catastrophe biomes)
+localList = []                 # Contains all info from the text file
+pythonShine = ""             # Indicates position of PythonShine
 maximumTurns = ""          # Indicates maximum number of turns to play
-turnNumber = 0            # Indicates current turn number
-playerSword = 0            # Indicates level of player's sword
-playerDiamonds = 0        # Indicates number of player's diamonds
-roundOn = False           # Indicates whether the game should loop for another turn, or restart
-gameOn = True            # Indicates whether the game should end completely
+turnNumber = 0             # Indicates current turn number
+roundOn = False            # Indicates whether the game should loop for another turn, or restart
+gameOn = True             # Indicates whether the game should end completely
+catastrophe = ""            # Indicates whether the player wants catastrophes to occur or not
 catastrophePos = ""         # Indicates the position of a catastrophe
-biomeList = []              # Holds a list of all currently active biomes (minus catastrophe biomes)
-fileName = "biomesData1.txt" # Holds the name of the text file with biome information
+catastropheNumber = 0     # Number of catastrophes occured (for positioning turtles)
 
 # FUNCTIONS
 
