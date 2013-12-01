@@ -15,6 +15,7 @@ playerName = ""            # Holds player name
 playerHealth = ""            # Indicates current health of the player
 playerSword = 0             # Indicates level of player's sword
 playerDiamonds = 0         # Indicates number of player's diamonds
+playerDiamondsTotal = 0     # Indicates total number of diamonds collected thru all rounds
 biomeData = []              # Holds information about all of the biomes (to be parsed)
 biomeDiamonds = []         # Holds number of diamonds in each biome
 biomeSwords = []            # Holds level of sword in each biome
@@ -367,7 +368,15 @@ def catastropheGenerator():     # Generates position of catastrophes, and remove
             if playerPos == catastrophePos:
                 playerHealth == 0
                 print playerName, "has been caught in the catastrophe!"
-                    
+
+def roundReset():
+    global playerDiamondsTotal
+    playerDiamondsTotal += playerDiamonds
+    playerDiamonds = 0
+    catastrophe = ""
+    catastropheNumber = 0
+
+
 # EXECUTION TOP LEVEL
 
 gameStart()
@@ -405,3 +414,4 @@ while gameOn == True:
     biomeTable()
     print 
     playerInfo()
+    roundReset()
