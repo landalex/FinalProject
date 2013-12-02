@@ -1,4 +1,4 @@
-# Much PythonShine
+# PythonShine
 # Created by Evan Chisholm and Alex Land
 
 import random
@@ -8,14 +8,12 @@ import turtle as t
 
 startGame = ""              # Indicates if game should begin
 godMode = ""               # Determines if player should choose their own position/health etc
-fileName = "biomesData1.txt" # Holds the name of the text file with biome information
 fillColor = "tan"              # Default fill color of the biomes (For turtles)
 playerPos = -1              # Indicates position of the player
 playerName = ""            # Holds player name
 playerHealth = ""            # Indicates current health of the player
 playerSword = 0             # Indicates level of player's sword
 playerDiamonds = 0         # Indicates number of player's diamonds
-playerDiamondsTotal = 0     # Indicates total number of diamonds collected thru all rounds
 biomeData = []              # Holds information about all of the biomes (to be parsed)
 biomeDiamonds = []         # Holds number of diamonds in each biome
 biomeSwords = []            # Holds level of sword in each biome
@@ -54,10 +52,6 @@ def gameStart():            # This function initializes the game, and defines go
         else:
             print "Please enter y for yes or n for no."
 
-    global fileName
-    fileName = raw_input("Would you like to use your own biome text file? If yes, type the file name (including '.txt'). Otherwise, type 'n'. ")
-    if fileName == "n":
-        fileName = "biomesData1.txt"
 
 def enterInfo():            # Gets player to enter information like health, name and max turns
     global playerHealth
@@ -143,7 +137,7 @@ def drawBoard():            # Turtle function to draw the entire board
     t.penup()
     t.forward(-300)
     t.pendown()
-    for i in range((8 - catastropheNumber)):
+    for i in range(len(biomeList)):
         if i == pythonShine and godMode == True:
             biomeDraw("green")
         else:
@@ -213,6 +207,7 @@ def biomeDataParser(localList):     # Parses text file, and seperates in to list
             biomeSwords.append(int(biomeData[j][k+1]))
             biomeEnemies.append(int(biomeData[j][k+2]))
             biomeList.append(j)
+
 
 def biomeTable():           # Draws the table indicating information for each biome
     print "The current board state is as follows:"
@@ -291,8 +286,10 @@ def diamondCalculator():        # Calculates number of diamonds picked up in eac
     if playerPos == pythonShine:
         playerDiamonds = 9999
     else:
-        playerDiamonds += (biomeDiamonds[playerPos])/3
-        print playerName, "has collected", (biomeDiamonds[playerPos]/3), "diamonds!"
+        tempDiamonds = (biomeDiamonds[playerPos])/3
+        playerDiamonds += tempDiamonds
+        biomeDiamonds[playerPos] -= tempDiamonds
+        print playerName, "has collected", tempDiamonds, "diamonds!"
 
 def playerInfo():               # Displays information about the player's current stats, 
     global playerSword        # and prompts player to play again if dead
@@ -374,32 +371,62 @@ def catastropheGenerator():     # Generates position of catastrophes, and remove
                 if j >= catastrophePos:
                     biomeList[j] -= 1
                     
-def roundReset():
-    global playerDiamondsTotal
+def roundReset():                       # Resets the variables to their default for each round
     global playerDiamonds
     global catastrophe
     global catastropheNumber
     global pythonShine
     global maximumTurns
-    playerDiamondsTotal += playerDiamonds
+    global playerHealth
+    global turnNumber
+    global biomeData
+    global biomeDiamonds
+    global biomeSwords
+    global biomeEnemies
+    global biomeList
     playerDiamonds = 0
     catastrophe = ""
     catastropheNumber = 0
     pythonShine = ""
     maximumTurns = ""
+    playerHealth = ""
+    turnNumber = 0
+    biomeData = []
+    biomeDiamonds = []
+    biomeSwords = []
+    biomeEnemies = []
+    biomeList = []
 
+def endGameCalculations():
+    base2List = []
+    base2Str = ""
+    for i in range(len(biomeDiamonds)):
+        if biomeDiamonds[i]%2 ==0:
+            base2List.append(0)
+        else:
+            base2List.append(1)
+    print "The base2 number created from the diamonds in the biomes is,", base2List
+    base10Conversion = 0
+    j = len(base2List)-1
+    for i in range(len(base2List)):
+        if base2List[i] == 0:
+            base10Conversion += 0
+        elif base2List[i] == 1:
+            if i == len(base2List):
+                base10Conversion += 1
+            else:
+                base10Conversion += 2**j
+        j -= 1
+    print "And so, lo and behold, your final score is....", base10Conversion
 
+    
 # EXECUTION TOP LEVEL
-
-gameStart()
-readFile(fileName)
-biomeDataParser(localList)
- 
-
-
 
 # WHILE LOOP
 while gameOn == True:
+    gameStart()
+    readFile("biomesData1.txt")
+    biomeDataParser(localList)
     pythonShineGenerator()
     print
     biomeTable()
@@ -421,10 +448,12 @@ while gameOn == True:
         gameCheck()
         if catastrophe == True:
             catastropheGenerator()
+        gameCheck()
         t.clearscreen()
 
-    print
+    print 
     biomeTable()
     print 
     playerInfo()
+    endGameCalculations()
     roundReset()
