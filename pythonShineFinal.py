@@ -95,8 +95,8 @@ def turnGenerator():        # Generates the "dice rolling" every turn, or allows
     global turnNumber
     if turnNumber >= 0:
         if godMode == True:
-            playerPos = raw_input("Which biome would you like to go to (Pick a number between 1 and 7)? ")
-            while str(playerPos).isdigit() == False or (int(playerPos) <= 0 or int(playerPos) > 7):
+            playerPos = raw_input("Which biome would you like to go to? ")
+            while str(playerPos).isdigit() == False or (int(playerPos) <= 0 or int(playerPos) > (len(biomeList))):
                 playerPos = raw_input("Which biome would you like to go to (Pick a number between 1 and 7)? ")
             playerPos = int(playerPos)
         if godMode == False:
@@ -249,8 +249,8 @@ def biomeTable():           # Draws the table indicating information for each bi
 def pythonShineGenerator():         # Generates the PythonShine position
     global pythonShine
     if godMode == True:
-        while pythonShine.isdigit() == False or int(pythonShine) < 1 or int(pythonShine) > 7:
-            pythonShine = raw_input("Where do you want to place PythonShine? (Pick a number from 1 to 7) ")
+        while pythonShine.isdigit() == False or int(pythonShine) < 1 or int(pythonShine) > (len(biomeList)):
+            pythonShine = raw_input("Where do you want to place PythonShine? ")
         pythonShine = int(pythonShine)
             
     elif godMode == False:
@@ -335,7 +335,7 @@ def playerInfo():               # Displays information about the player's curren
                 roundOn = True
             elif gameOnInput == "n":
                 gameOn = False
-                print "Thanks for nothing."
+                endGameCalculations()
             else:
                 print "Please input y for yes or n for no."
                 gameOnInput = ""
@@ -351,26 +351,6 @@ def gameCheck():            # Checks if the game should continue, or end (if pla
     if turnNumber == maximumTurns:
         roundOn = False
     
-def catastropheGenerator():     # Generates position of catastrophes, and removes the biome
-    global catastrophePos
-    global catastropheNumber
-    global pythonShine
-    catastrophePos =  5 * (random.randint(1,(len(biomeList))))
-    for i in range(len(biomeList) - 1):
-        if catastrophePos == biomeList[i]:   
-            print "A catastrophe has occured in biome", catastrophePos
-            print "Biome", catastrophePos, "has been destroyed!"
-            biomeList.remove(catastrophePos)
-            catastropheNumber += 1
-            if playerPos == catastrophePos:
-                playerHealth = 0
-                print playerName, "has been caught in the catastrophe!"
-            if pythonShine == catastrophePos:
-                pythonShine = -1
-            for j in range(len(biomeList)):
-                if j >= catastrophePos:
-                    biomeList[j] -= 1
-                    
 def roundReset():                       # Resets the variables to their default for each round
     global playerDiamonds
     global catastrophe
@@ -419,7 +399,28 @@ def endGameCalculations():
         j -= 1
     print "And so, lo and behold, your final score is....", base10Conversion
 
-    
+def catastropheGenerator(): # Generates position of catastrophes, and removes the biome
+    global catastrophePos
+    global catastropheNumber
+    global pythonShine
+    catastrophePos = random.randint(1,5*(len(biomeList)))
+    if catastrophePos < len(biomeList):
+        print "A catastrophe has occured in biome", catastrophePos
+        print "Biome", catastrophePos, "has been destroyed!"
+        biomeList.remove(catastrophePos)
+        catastropheNumber += 1
+        if playerPos == catastrophePos:
+            playerHealth = 0
+            print playerName, "has been caught in the catastrophe!"
+        if pythonShine == catastrophePos:
+            pythonShine = -1
+        else:
+            pythonShine -= 1
+        for j in range(len(biomeList)):
+            if j >= catastrophePos:
+                biomeList[j] -= 1
+
+
 # EXECUTION TOP LEVEL
 
 # WHILE LOOP
@@ -455,5 +456,4 @@ while gameOn == True:
     biomeTable()
     print 
     playerInfo()
-    endGameCalculations()
     roundReset()
