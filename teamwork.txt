@@ -1,0 +1,12 @@
+Evan Chisholm - 10 Hours:
+    - Flowchart 
+    - Coding (~ 30 % of total code written)
+    - Testing (~ 70 % of all testing)
+    - Debugging
+    
+Alex Land - 12 Hours:
+    - Preliminary planning
+    - Coding (~70 % of total code written)
+    - Sample Runs
+    - Play Testing (~ 30 % of all testing)
+    
