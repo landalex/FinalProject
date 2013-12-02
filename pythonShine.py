@@ -357,8 +357,10 @@ def gameCheck():            # Checks if the game should continue, or end (if pla
 def catastropheGenerator():     # Generates position of catastrophes, and removes the biome
     global catastrophePos
     global catastropheNumber
+    global pythonShine
+    global playerPos
     catastrophePos = (7 / 5) * (random.randint(1,7))
-    for i in range(catastrophePos):
+    for i in range(catastrophePos + 1):
         if catastrophePos == biomeList[i]:   
             catastropheNumber += 1
             print "A catastrophe has occured in biome", catastrophePos
@@ -368,13 +370,25 @@ def catastropheGenerator():     # Generates position of catastrophes, and remove
             if playerPos == catastrophePos:
                 playerHealth == 0
                 print playerName, "has been caught in the catastrophe!"
-
+            if pythonShine == catastrophePos:
+                pythonShine = -1
+            for j in range(len(biomeList)):
+                if j >= catastrophePos:
+                    biomeList[j] -= 1
+                    
 def roundReset():
     global playerDiamondsTotal
+    global playerDiamonds
+    global catastrophe
+    global catastropheNumber
+    global pythonShine
+    global maximumTurns
     playerDiamondsTotal += playerDiamonds
     playerDiamonds = 0
     catastrophe = ""
     catastropheNumber = 0
+    pythonShine = ""
+    maximumTurns = ""
 
 
 # EXECUTION TOP LEVEL
@@ -382,15 +396,16 @@ def roundReset():
 gameStart()
 readFile(fileName)
 biomeDataParser(localList)
-pythonShineGenerator()
-print 
-biomeTable()
-print 
+ 
 
 
 
 # WHILE LOOP
 while gameOn == True:
+    pythonShineGenerator()
+    print
+    biomeTable()
+    print 
     enterInfo()
     while roundOn == True:
         t.speed(0)
@@ -405,9 +420,9 @@ while gameOn == True:
         diamondCalculator()
         combatCalculator()
         print
+        gameCheck()
         if catastrophe == True:
             catastropheGenerator()
-        gameCheck()
         t.clearscreen()
 
     print
